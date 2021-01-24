@@ -41,6 +41,10 @@ public class ProductViewModel extends ViewModel {
         return products;
     }
 
+    public void setProductList (List<Product> productList){
+        products.setValue(productList);
+    }
+
     public void addProduct(Product product){
         List<Product> productList = new ArrayList<>();
         productList.add(product);
@@ -72,6 +76,7 @@ public class ProductViewModel extends ViewModel {
                     for (Product product : products) {
                         database.addProduct(product);
                     }
+                    setProductList(database.getAllProducts());
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
@@ -82,7 +87,6 @@ public class ProductViewModel extends ViewModel {
                 System.out.println("Error while trying to get data from Firebase");
             }
         });
-        products.setValue(database.getAllProducts());
     }
 
     static {

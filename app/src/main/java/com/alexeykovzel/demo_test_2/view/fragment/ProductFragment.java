@@ -30,7 +30,6 @@ public class ProductFragment extends Fragment implements ProductAdapter.ItemClic
     private static ProductAdapter adapter;
     private ProductViewModel mViewModel;
     RecyclerView recyclerView;
-    private Context context;
 
     public static ProductFragment newInstance() {
         return new ProductFragment();
@@ -41,14 +40,13 @@ public class ProductFragment extends Fragment implements ProductAdapter.ItemClic
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main_fragment, container, false);
-        context = view.getContext();
         setHasOptionsMenu(true);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new ProductAdapter(context);
+        adapter = new ProductAdapter(getContext());
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
@@ -69,6 +67,7 @@ public class ProductFragment extends Fragment implements ProductAdapter.ItemClic
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                adapter.setProductList(mViewModel.getProductList().getValue());
                 adapter.getFilter().filter(newText);
                 return false;
             }
@@ -80,7 +79,7 @@ public class ProductFragment extends Fragment implements ProductAdapter.ItemClic
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
-        mViewModel.setContext(context);
+        mViewModel.setContext(this.getContext());
         mViewModel.getProductList().observe(getViewLifecycleOwner(), new Observer<List<Product>>() {
             @Override
             public void onChanged(List<Product> products) {
@@ -90,11 +89,6 @@ public class ProductFragment extends Fragment implements ProductAdapter.ItemClic
         });
         mViewModel.initProductList();
     }
-
-    public ProductViewModel getmViewModel() {
-        return mViewModel;
-    }
-
     @Override
     public void onItemClick(View view, int position) {
         mViewModel.deleteProduct(position);

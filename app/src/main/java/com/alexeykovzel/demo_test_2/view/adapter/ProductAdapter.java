@@ -18,9 +18,8 @@ import com.alexeykovzel.demo_test_2.model.Product;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> implements Filterable{
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> implements Filterable {
     private List<Product> productList;
-    private List<Product> productListFull;
     private LayoutInflater mInflater;
     private ItemClickListener clickListener;
 
@@ -69,7 +68,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 for (Product product : productList) {
                     if (product.getNames().getEn().toLowerCase().contains(filterPattern)) {
                         filteredList.add(product);
-
                     }
                 }
             }
