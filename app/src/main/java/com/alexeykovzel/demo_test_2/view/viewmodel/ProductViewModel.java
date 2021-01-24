@@ -1,14 +1,11 @@
 package com.alexeykovzel.demo_test_2.view.viewmodel;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.alexeykovzel.demo_test_2.DatabaseManager;
 import com.alexeykovzel.demo_test_2.model.Product;
@@ -44,7 +41,9 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     public void setProductList(List<Product> productList) {
-        products.setValue(productList);
+        if (productList != null) {
+            products.setValue(productList);
+        }
     }
 
     public void addProduct(Product product) {
