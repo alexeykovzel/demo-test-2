@@ -1,9 +1,11 @@
 package com.alexeykovzel.demo_test_2.view.viewmodel;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -23,13 +25,13 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductViewModel extends ViewModel {
+public class ProductViewModel extends AndroidViewModel {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private MutableLiveData<List<Product>> products;
-    @SuppressLint("StaticFieldLeak")
-    private Context context;
+    private DatabaseManager database;
 
-    public ProductViewModel() {
+    public ProductViewModel(@NonNull Application application) {
+        super(application);
         products = new MutableLiveData<>();
     }
 
@@ -41,31 +43,30 @@ public class ProductViewModel extends ViewModel {
         return products;
     }
 
-    public void setProductList (List<Product> productList){
+    public void setProductList(List<Product> productList) {
         products.setValue(productList);
     }
 
-    public void addProduct(Product product){
+    public void addProduct(Product product) {
         List<Product> productList = new ArrayList<>();
         productList.add(product);
+        database.addProduct(product);
         products.setValue(productList);
     }
 
-    public void deleteProduct(int position){
+    public void deleteProduct(int position) {
         List<Product> productList = products.getValue();
-        assert productList != null;
-        productList.remove(position);
+        if (productList != null) {
+            database.deleteProductByUuid(productList.get(position).getUuid());
+            productList.remove(position);
+        }
         products.setValue(productList);
-    }
-
-    public void setContext(Context context){
-        this.context = context;
     }
 
     public void initProductList() {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://fir-test-1cbbc.appspot.com/testData.json");
-        final DatabaseManager database = DatabaseManager.getInstance(context);
+        database = DatabaseManager.getInstance(getApplication());
         final long ONE_MEGABYTE = 1024 * 1024;
         storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override

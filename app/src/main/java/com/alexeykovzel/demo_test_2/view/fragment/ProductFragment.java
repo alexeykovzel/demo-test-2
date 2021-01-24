@@ -79,7 +79,6 @@ public class ProductFragment extends Fragment implements ProductAdapter.ItemClic
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
-        mViewModel.setContext(this.getContext());
         mViewModel.getProductList().observe(getViewLifecycleOwner(), new Observer<List<Product>>() {
             @Override
             public void onChanged(List<Product> products) {

@@ -29,6 +29,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
     public void setProductList(List<Product> productList) {
+        assert productList != null;
         this.productList = new ArrayList<>(productList);
     }
 
