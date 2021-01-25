@@ -28,6 +28,7 @@ import java.util.List;
 public class ProductFragment extends Fragment implements ProductAdapter.ItemClickListener {
     private static ProductAdapter adapter;
     private ProductViewModel mViewModel;
+    private SearchView searchView;
     RecyclerView recyclerView;
 
     public static ProductFragment newInstance() {
@@ -52,25 +53,33 @@ public class ProductFragment extends Fragment implements ProductAdapter.ItemClic
         return view;
     }
 
+
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.product_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                adapter.setProductList(mViewModel.getProductList().getValue());
-                adapter.getFilter().filter(newText);
-                return false;
-            }
-        });
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+        }
+        if (searchView != null) {
+            searchView.setIconified(false);
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    adapter.setProductList(mViewModel.getProductList().getValue());
+                    adapter.getFilter().filter(newText);
+                    return false;
+                }
+            });
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -87,6 +96,7 @@ public class ProductFragment extends Fragment implements ProductAdapter.ItemClic
         });
         mViewModel.initProductList();
     }
+
     @Override
     public void onItemClick(View view, int position) {
         mViewModel.deleteProduct(position);
